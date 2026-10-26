@@ -1,54 +1,63 @@
 {
  "actions": [],
  "autoname": "naming_series:",
- "creation": "2026-10-26 12:00:00.000000",
+ "creation": "2026-10-26 15:00:00.000000",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "invoice_section",
   "naming_series",
   "posting_date",
-  "branch",
   "column_break_invoice_1",
-  "ref_no",
-  "sales_type",
+  "branch",
   "column_break_invoice_2",
+  "ref_no",
+  "column_break_invoice_3",
+  "sales_type",
+  "column_break_invoice_4",
   "is_bank",
+  "column_break_invoice_5",
   "mode_of_payment",
   "customer_section",
   "customer",
-  "customer_name",
   "column_break_customer_1",
-  "tax_id",
-  "mobile_no",
+  "customer_name",
   "column_break_customer_2",
+  "tax_id",
+  "column_break_customer_3",
+  "mobile_no",
+  "column_break_customer_4",
   "simplified_tax_invoice",
+  "column_break_customer_5",
   "change_cash_customer_name",
   "cash_customer_name",
   "settings_section",
   "company",
-  "pos_profile",
   "column_break_settings_1",
-  "warehouse",
-  "selling_price_list",
+  "pos_profile",
   "column_break_settings_2",
+  "warehouse",
+  "column_break_settings_3",
+  "selling_price_list",
+  "column_break_settings_4",
   "taxes_and_charges",
+  "column_break_settings_5",
   "default_tax_rate",
   "items_section",
   "items",
   "totals_section",
-  "total_items",
   "total_qty",
+  "total_items",
   "column_break_totals_1",
   "total_amount",
-  "total_tax",
   "column_break_totals_2",
+  "total_tax",
+  "column_break_totals_3",
   "grand_total",
-  "balance_section",
+  "column_break_totals_4",
   "previous_balance",
-  "column_break_balance_1",
   "received_amount",
-  "column_break_balance_2",
+  "column_break_totals_5",
   "net_balance",
   "customer_po_section",
   "po_no",
@@ -87,6 +96,10 @@
    "search_index": 1
   },
   {
+   "fieldname": "column_break_invoice_1",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "branch",
    "fieldtype": "Link",
    "in_standard_filter": 1,
@@ -95,7 +108,7 @@
    "remember_last_selected_value": 1
   },
   {
-   "fieldname": "column_break_invoice_1",
+   "fieldname": "column_break_invoice_2",
    "fieldtype": "Column Break"
   },
   {
@@ -104,6 +117,10 @@
    "in_global_search": 1,
    "label": "Ref. No",
    "no_copy": 1
+  },
+  {
+   "fieldname": "column_break_invoice_3",
+   "fieldtype": "Column Break"
   },
   {
    "default": "Credit",
@@ -116,7 +133,7 @@
    "reqd": 1
   },
   {
-   "fieldname": "column_break_invoice_2",
+   "fieldname": "column_break_invoice_4",
    "fieldtype": "Column Break"
   },
   {
@@ -124,6 +141,10 @@
    "fieldname": "is_bank",
    "fieldtype": "Check",
    "label": "Is Bank"
+  },
+  {
+   "fieldname": "column_break_invoice_5",
+   "fieldtype": "Column Break"
   },
   {
    "depends_on": "eval:doc.sales_type=='Cash'",
@@ -135,8 +156,7 @@
   },
   {
    "fieldname": "customer_section",
-   "fieldtype": "Section Break",
-   "label": "Customer Account"
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "customer",
@@ -148,6 +168,10 @@
    "search_index": 1
   },
   {
+   "fieldname": "column_break_customer_1",
+   "fieldtype": "Column Break"
+  },
+  {
    "fetch_from": "customer.customer_name",
    "fieldname": "customer_name",
    "fieldtype": "Data",
@@ -157,7 +181,7 @@
    "read_only": 1
   },
   {
-   "fieldname": "column_break_customer_1",
+   "fieldname": "column_break_customer_2",
    "fieldtype": "Column Break"
   },
   {
@@ -168,6 +192,10 @@
    "read_only": 1
   },
   {
+   "fieldname": "column_break_customer_3",
+   "fieldtype": "Column Break"
+  },
+  {
    "fetch_from": "customer.mobile_no",
    "fetch_if_empty": 1,
    "fieldname": "mobile_no",
@@ -176,13 +204,17 @@
    "options": "Phone"
   },
   {
-   "fieldname": "column_break_customer_2",
+   "fieldname": "column_break_customer_4",
    "fieldtype": "Column Break"
   },
   {
    "fieldname": "simplified_tax_invoice",
    "fieldtype": "Check",
    "label": "Simplified Tax Invoice"
+  },
+  {
+   "fieldname": "column_break_customer_5",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "change_cash_customer_name",
@@ -215,6 +247,10 @@
    "reqd": 1
   },
   {
+   "fieldname": "column_break_settings_1",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "pos_profile",
    "fieldtype": "Link",
    "label": "POS Profile",
@@ -224,7 +260,7 @@
    "reqd": 1
   },
   {
-   "fieldname": "column_break_settings_1",
+   "fieldname": "column_break_settings_2",
    "fieldtype": "Column Break"
   },
   {
@@ -236,6 +272,10 @@
    "reqd": 1
   },
   {
+   "fieldname": "column_break_settings_3",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "selling_price_list",
    "fieldtype": "Link",
    "label": "Price List",
@@ -243,7 +283,7 @@
    "print_hide": 1
   },
   {
-   "fieldname": "column_break_settings_2",
+   "fieldname": "column_break_settings_4",
    "fieldtype": "Column Break"
   },
   {
@@ -252,6 +292,10 @@
    "label": "VAT Template",
    "options": "Sales Taxes and Charges Template",
    "print_hide": 1
+  },
+  {
+   "fieldname": "column_break_settings_5",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "default_tax_rate",
@@ -278,16 +322,16 @@
    "label": "Totals"
   },
   {
+   "fieldname": "total_qty",
+   "fieldtype": "Float",
+   "label": "T. Qty",
+   "read_only": 1
+  },
+  {
    "fieldname": "total_items",
    "fieldtype": "Int",
    "label": "Total Listed Items",
    "print_hide": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "total_qty",
-   "fieldtype": "Float",
-   "label": "T. Qty",
    "read_only": 1
   },
   {
@@ -302,6 +346,10 @@
    "read_only": 1
   },
   {
+   "fieldname": "column_break_totals_2",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "total_tax",
    "fieldtype": "Currency",
    "label": "T. Tax",
@@ -309,7 +357,7 @@
    "read_only": 1
   },
   {
-   "fieldname": "column_break_totals_2",
+   "fieldname": "column_break_totals_3",
    "fieldtype": "Column Break"
   },
   {
@@ -322,9 +370,8 @@
    "read_only": 1
   },
   {
-   "fieldname": "balance_section",
-   "fieldtype": "Section Break",
-   "label": "Account Balance"
+   "fieldname": "column_break_totals_4",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "previous_balance",
@@ -335,10 +382,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "column_break_balance_1",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "received_amount",
    "fieldtype": "Currency",
    "label": "Received AMT",
@@ -347,7 +390,7 @@
    "read_only": 1
   },
   {
-   "fieldname": "column_break_balance_2",
+   "fieldname": "column_break_totals_5",
    "fieldtype": "Column Break"
   },
   {
@@ -418,7 +461,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-26 12:00:00.000000",
+ "modified": "2026-10-26 15:00:00.000000",
  "modified_by": "Administrator",
  "module": "Metalworld Erp",
  "name": "Sales Bill",
