@@ -1,0 +1,509 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2026-10-26 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "invoice_section",
+  "naming_series",
+  "posting_date",
+  "branch",
+  "column_break_invoice_1",
+  "ref_no",
+  "sales_type",
+  "column_break_invoice_2",
+  "is_bank",
+  "mode_of_payment",
+  "customer_section",
+  "customer",
+  "customer_name",
+  "column_break_customer_1",
+  "tax_id",
+  "mobile_no",
+  "column_break_customer_2",
+  "simplified_tax_invoice",
+  "change_cash_customer_name",
+  "cash_customer_name",
+  "settings_section",
+  "company",
+  "pos_profile",
+  "column_break_settings_1",
+  "warehouse",
+  "selling_price_list",
+  "column_break_settings_2",
+  "taxes_and_charges",
+  "default_tax_rate",
+  "items_section",
+  "items",
+  "totals_section",
+  "total_items",
+  "total_qty",
+  "column_break_totals_1",
+  "total_amount",
+  "total_tax",
+  "column_break_totals_2",
+  "grand_total",
+  "balance_section",
+  "previous_balance",
+  "column_break_balance_1",
+  "received_amount",
+  "column_break_balance_2",
+  "net_balance",
+  "customer_po_section",
+  "po_no",
+  "column_break_po",
+  "po_date",
+  "references_section",
+  "pos_invoice",
+  "column_break_refs",
+  "remarks",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "invoice_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "SB-.YYYY.-",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "no_copy": 1,
+   "options": "SB-.YYYY.-",
+   "print_hide": 1,
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date",
+   "no_copy": 1,
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Branch",
+   "options": "Branch",
+   "remember_last_selected_value": 1
+  },
+  {
+   "fieldname": "column_break_invoice_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ref_no",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "label": "Ref. No",
+   "no_copy": 1
+  },
+  {
+   "default": "Credit",
+   "fieldname": "sales_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Type",
+   "options": "Cash\nCredit",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_invoice_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.sales_type=='Cash'",
+   "fieldname": "is_bank",
+   "fieldtype": "Check",
+   "label": "Is Bank"
+  },
+  {
+   "depends_on": "eval:doc.sales_type=='Cash'",
+   "fieldname": "mode_of_payment",
+   "fieldtype": "Link",
+   "label": "Mode of Payment",
+   "mandatory_depends_on": "eval:doc.sales_type=='Cash'",
+   "options": "Mode of Payment"
+  },
+  {
+   "fieldname": "customer_section",
+   "fieldtype": "Section Break",
+   "label": "Customer Account"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "A/C No",
+   "options": "Customer",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "customer.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "label": "A/C Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_customer_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "customer.tax_id",
+   "fieldname": "tax_id",
+   "fieldtype": "Data",
+   "label": "TAX Reg. No",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "customer.mobile_no",
+   "fetch_if_empty": 1,
+   "fieldname": "mobile_no",
+   "fieldtype": "Data",
+   "label": "Mobile No",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "column_break_customer_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "simplified_tax_invoice",
+   "fieldtype": "Check",
+   "label": "Simplified Tax Invoice"
+  },
+  {
+   "fieldname": "change_cash_customer_name",
+   "fieldtype": "Check",
+   "label": "Change Cash Customer Name",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "depends_on": "change_cash_customer_name",
+   "fieldname": "cash_customer_name",
+   "fieldtype": "Data",
+   "label": "Cash Customer Name",
+   "mandatory_depends_on": "change_cash_customer_name",
+   "no_copy": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "settings_section",
+   "fieldtype": "Section Break",
+   "label": "Settings"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "print_hide": 1,
+   "remember_last_selected_value": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "pos_profile",
+   "fieldtype": "Link",
+   "label": "POS Profile",
+   "options": "POS Profile",
+   "print_hide": 1,
+   "remember_last_selected_value": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_settings_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Source Warehouse",
+   "options": "Warehouse",
+   "print_hide": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "selling_price_list",
+   "fieldtype": "Link",
+   "label": "Price List",
+   "options": "Price List",
+   "print_hide": 1
+  },
+  {
+   "fieldname": "column_break_settings_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "taxes_and_charges",
+   "fieldtype": "Link",
+   "label": "VAT Template",
+   "options": "Sales Taxes and Charges Template",
+   "print_hide": 1
+  },
+  {
+   "fieldname": "default_tax_rate",
+   "fieldtype": "Percent",
+   "label": "Default VAT %",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Sales Item Details"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Sales Bill Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "totals_section",
+   "fieldtype": "Section Break",
+   "label": "Totals"
+  },
+  {
+   "fieldname": "total_items",
+   "fieldtype": "Int",
+   "label": "Total Listed Items",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_qty",
+   "fieldtype": "Float",
+   "label": "T. Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_totals_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_tax",
+   "fieldtype": "Currency",
+   "label": "T. Tax",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_totals_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "grand_total",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "T. Inc VAT",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "balance_section",
+   "fieldtype": "Section Break",
+   "label": "Account Balance"
+  },
+  {
+   "fieldname": "previous_balance",
+   "fieldtype": "Currency",
+   "label": "Pre. Balance",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_balance_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "received_amount",
+   "fieldtype": "Currency",
+   "label": "Received AMT",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_balance_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "description": "Pre. Balance + T. Inc VAT - Received AMT",
+   "fieldname": "net_balance",
+   "fieldtype": "Currency",
+   "label": "Net Amount",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "po_no",
+   "fieldname": "customer_po_section",
+   "fieldtype": "Section Break",
+   "label": "Customer PO Details"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "po_no",
+   "fieldtype": "Data",
+   "label": "Customer's Purchase Order"
+  },
+  {
+   "fieldname": "column_break_po",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "po_date",
+   "fieldtype": "Date",
+   "label": "Customer's Purchase Order Date"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "references_section",
+   "fieldtype": "Section Break",
+   "label": "References"
+  },
+  {
+   "fieldname": "pos_invoice",
+   "fieldtype": "Link",
+   "label": "POS Invoice",
+   "no_copy": 1,
+   "options": "POS Invoice",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_refs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Sales Bill",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-10-26 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Metalworld Erp",
+ "name": "Sales Bill",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "customer,customer_name,ref_no",
+ "show_title_field_in_link": 0,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "customer_name",
+ "track_changes": 1
+}
