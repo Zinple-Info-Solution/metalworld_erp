@@ -45,7 +45,30 @@ frappe.ui.form.on("Sales Bill", {
 		if (frm.doc.pos_profile) set_bill_defaults(frm, true);
 	},
 
+	account_no(frm) {
+		if (!frm.doc.account_no || frm._setting_account_no) return;
+		frappe.call({
+			method: `${SALES_BILL}.get_customer_by_account_no`,
+			args: { account_no: frm.doc.account_no },
+			callback: ({ message }) => {
+				if (message && message !== frm.doc.customer) frm.set_value("customer", message);
+			},
+			error: () => frm.set_value("account_no", ""),
+		});
+	},
+
 	customer(frm) {
+		const set_account_no = (value) => {
+			frm._setting_account_no = true;
+			frm.set_value("account_no", value || "").then(() => (frm._setting_account_no = false));
+		};
+		if (frm.doc.customer) {
+			frappe.db
+				.get_value("Customer", frm.doc.customer, "account_no")
+				.then(({ message }) => set_account_no(message && message.account_no));
+		} else {
+			set_account_no("");
+		}
 		update_previous_balance(frm);
 	},
 

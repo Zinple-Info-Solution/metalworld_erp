@@ -83,7 +83,7 @@ app_license = "mit"
 # ------------
 
 # before_install = "metalworld_erp.install.before_install"
-# after_install = "metalworld_erp.install.after_install"
+after_install = "metalworld_erp.install.after_install"
 
 # Uninstallation
 # ------------

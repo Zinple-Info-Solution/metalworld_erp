@@ -1,7 +1,7 @@
 {
  "actions": [],
  "autoname": "naming_series:",
- "creation": "2026-10-26 15:00:00.000000",
+ "creation": "2026-10-26 19:00:00.000000",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -19,8 +19,9 @@
   "column_break_invoice_5",
   "mode_of_payment",
   "customer_section",
-  "customer",
+  "account_no",
   "column_break_customer_1",
+  "customer",
   "customer_name",
   "column_break_customer_2",
   "tax_id",
@@ -31,18 +32,6 @@
   "column_break_customer_5",
   "change_cash_customer_name",
   "cash_customer_name",
-  "settings_section",
-  "company",
-  "column_break_settings_1",
-  "pos_profile",
-  "column_break_settings_2",
-  "warehouse",
-  "column_break_settings_3",
-  "selling_price_list",
-  "column_break_settings_4",
-  "taxes_and_charges",
-  "column_break_settings_5",
-  "default_tax_rate",
   "items_section",
   "items",
   "totals_section",
@@ -59,6 +48,18 @@
   "received_amount",
   "column_break_totals_5",
   "net_balance",
+  "settings_section",
+  "company",
+  "column_break_settings_1",
+  "pos_profile",
+  "column_break_settings_2",
+  "warehouse",
+  "column_break_settings_3",
+  "selling_price_list",
+  "column_break_settings_4",
+  "taxes_and_charges",
+  "column_break_settings_5",
+  "default_tax_rate",
   "customer_po_section",
   "po_no",
   "column_break_po",
@@ -159,25 +160,33 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "customer",
-   "fieldtype": "Link",
+   "fieldname": "account_no",
+   "fieldtype": "Data",
+   "in_global_search": 1,
    "in_standard_filter": 1,
-   "label": "A/C No",
-   "options": "Customer",
-   "reqd": 1,
-   "search_index": 1
+   "label": "A/C No"
   },
   {
    "fieldname": "column_break_customer_1",
    "fieldtype": "Column Break"
   },
   {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "A/C Name",
+   "options": "Customer",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
    "fetch_from": "customer.customer_name",
    "fieldname": "customer_name",
    "fieldtype": "Data",
+   "hidden": 1,
    "in_global_search": 1,
    "in_list_view": 1,
-   "label": "A/C Name",
+   "label": "Customer Name",
    "read_only": 1
   },
   {
@@ -230,6 +239,105 @@
    "label": "Cash Customer Name",
    "mandatory_depends_on": "change_cash_customer_name",
    "no_copy": 1
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Sales Item Details"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Sales Bill Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "totals_section",
+   "fieldtype": "Section Break",
+   "label": "Totals"
+  },
+  {
+   "fieldname": "total_qty",
+   "fieldtype": "Float",
+   "label": "Total Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_items",
+   "fieldtype": "Int",
+   "label": "Total Listed Items",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_totals_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_totals_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_tax",
+   "fieldtype": "Currency",
+   "label": "Total Tax",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_totals_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "grand_total",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total Inc VAT",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_totals_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "previous_balance",
+   "fieldtype": "Currency",
+   "label": "Pre. Balance",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "received_amount",
+   "fieldtype": "Currency",
+   "label": "Received AMT",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_totals_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "description": "Pre. Balance + Total Inc VAT - Received AMT",
+   "fieldname": "net_balance",
+   "fieldtype": "Currency",
+   "label": "Net Amount",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "read_only": 1
   },
   {
    "collapsible": 1,
@@ -305,105 +413,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "items_section",
-   "fieldtype": "Section Break",
-   "label": "Sales Item Details"
-  },
-  {
-   "fieldname": "items",
-   "fieldtype": "Table",
-   "label": "Items",
-   "options": "Sales Bill Item",
-   "reqd": 1
-  },
-  {
-   "fieldname": "totals_section",
-   "fieldtype": "Section Break",
-   "label": "Totals"
-  },
-  {
-   "fieldname": "total_qty",
-   "fieldtype": "Float",
-   "label": "T. Qty",
-   "read_only": 1
-  },
-  {
-   "fieldname": "total_items",
-   "fieldtype": "Int",
-   "label": "Total Listed Items",
-   "print_hide": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_totals_1",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "total_amount",
-   "fieldtype": "Currency",
-   "label": "Total Amount",
-   "options": "Company:company:default_currency",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_totals_2",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "total_tax",
-   "fieldtype": "Currency",
-   "label": "T. Tax",
-   "options": "Company:company:default_currency",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_totals_3",
-   "fieldtype": "Column Break"
-  },
-  {
-   "bold": 1,
-   "fieldname": "grand_total",
-   "fieldtype": "Currency",
-   "in_list_view": 1,
-   "label": "T. Inc VAT",
-   "options": "Company:company:default_currency",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_totals_4",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "previous_balance",
-   "fieldtype": "Currency",
-   "label": "Pre. Balance",
-   "no_copy": 1,
-   "options": "Company:company:default_currency",
-   "read_only": 1
-  },
-  {
-   "fieldname": "received_amount",
-   "fieldtype": "Currency",
-   "label": "Received AMT",
-   "no_copy": 1,
-   "options": "Company:company:default_currency",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_totals_5",
-   "fieldtype": "Column Break"
-  },
-  {
-   "bold": 1,
-   "description": "Pre. Balance + T. Inc VAT - Received AMT",
-   "fieldname": "net_balance",
-   "fieldtype": "Currency",
-   "label": "Net Amount",
-   "no_copy": 1,
-   "options": "Company:company:default_currency",
-   "read_only": 1
-  },
-  {
    "collapsible": 1,
    "collapsible_depends_on": "po_no",
    "fieldname": "customer_po_section",
@@ -461,7 +470,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-26 15:00:00.000000",
+ "modified": "2026-10-26 19:00:00.000000",
  "modified_by": "Administrator",
  "module": "Metalworld Erp",
  "name": "Sales Bill",
