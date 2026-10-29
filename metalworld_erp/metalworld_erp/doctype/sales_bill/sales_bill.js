@@ -16,6 +16,10 @@ frappe.ui.form.on("Sales Bill", {
 		}));
 	},
 
+	onload_post_render(frm) {
+		setup_enter_key(frm);
+	},
+
 	onload(frm) {
 		if (frm.is_new() && !frm.doc.company) {
 			frm.set_value("company", frappe.defaults.get_user_default("Company"));
@@ -51,9 +55,13 @@ frappe.ui.form.on("Sales Bill", {
 			method: `${SALES_BILL}.get_customer_by_account_no`,
 			args: { account_no: frm.doc.account_no },
 			callback: ({ message }) => {
-				if (message && message !== frm.doc.customer) frm.set_value("customer", message);
+				if (!message) {
+					frappe.show_alert({ message: __("No Customer found with A/C No {0}", [frm.doc.account_no]), indicator: "orange" });
+					frm.set_value("account_no", "");
+				} else if (message !== frm.doc.customer) {
+					frm.set_value("customer", message);
+				}
 			},
-			error: () => frm.set_value("account_no", ""),
 		});
 	},
 
@@ -110,6 +118,45 @@ frappe.ui.form.on("Sales Bill Item", {
 	is_foc: calculate_form,
 	items_remove: calculate_form,
 });
+
+// Enter in the item table works like a POS entry line:
+// Item / Item Name / Unit -> QTY of the same row; QTY or later -> Item of the next row (added if needed).
+const ENTER_TO_QTY = ["item_code", "item_name", "uom"];
+
+function setup_enter_key(frm) {
+	const grid = frm.fields_dict.items.grid;
+	grid.wrapper.off("keydown.mw_enter").on("keydown.mw_enter", ".grid-row input", (e) => {
+		// A highlighted dropdown suggestion takes Enter first (Awesomplete prevents default).
+		if (e.which !== frappe.ui.keyCode.ENTER || e.isDefaultPrevented() || e.shiftKey) return;
+		const $input = $(e.target);
+		const fieldname = $input.attr("data-fieldname");
+		const row_idx = cint($input.closest(".grid-row").attr("data-idx"));
+		if (!fieldname || !row_idx) return;
+		e.preventDefault();
+
+		$input.trigger("blur"); // commit the typed value before leaving the cell
+		setTimeout(() => {
+			if (ENTER_TO_QTY.includes(fieldname)) {
+				focus_cell(grid.grid_rows[row_idx - 1], "qty");
+				return;
+			}
+			if (!grid.grid_rows[row_idx]) {
+				if (!(frm.doc.items || [])[row_idx - 1]?.item_code) return; // don't stack empty rows
+				grid.add_new_row(null, null, true);
+			}
+			focus_cell(grid.grid_rows[row_idx], "item_code");
+		}, 150);
+	});
+}
+
+function focus_cell(grid_row, fieldname) {
+	if (!grid_row) return;
+	grid_row.toggle_editable_row(true);
+	setTimeout(() => {
+		const field = grid_row.columns[fieldname] && grid_row.columns[fieldname].field;
+		if (field && field.$input) field.$input.trigger("focus").trigger("select");
+	}, 50);
+}
 
 // overwrite: a newly picked POS Profile replaces the warehouse, price list and VAT Template.
 function set_bill_defaults(frm, overwrite) {

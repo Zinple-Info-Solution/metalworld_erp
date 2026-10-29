@@ -37,6 +37,8 @@ class SalesBill(Document):
 			self.mode_of_payment = None
 		if self.account_no and not self.customer:
 			self.customer = get_customer_by_account_no(self.account_no)
+			if not self.customer:
+				frappe.throw(_("No Customer found with A/C No {0}.").format(frappe.bold(self.account_no)))
 		if self.customer:
 			self.customer_name, self.account_no = frappe.db.get_value(
 				"Customer", self.customer, ["customer_name", "account_no"]
@@ -212,10 +214,7 @@ def get_customer_balance(customer, company, date=None):
 @frappe.whitelist()
 def get_customer_by_account_no(account_no):
 	frappe.has_permission("Customer", "read", throw=True)
-	customer = frappe.db.get_value("Customer", {"account_no": (account_no or "").strip()})
-	if not customer:
-		frappe.throw(_("No Customer found with A/C No {0}.").format(frappe.bold(account_no)))
-	return customer
+	return frappe.db.get_value("Customer", {"account_no": (account_no or "").strip()})
 
 
 @frappe.whitelist()

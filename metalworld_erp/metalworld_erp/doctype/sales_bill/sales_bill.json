@@ -1,7 +1,7 @@
 {
  "actions": [],
  "autoname": "naming_series:",
- "creation": "2026-10-26 19:00:00.000000",
+ "creation": "2026-10-26 19:00:00",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -24,14 +24,14 @@
   "customer",
   "customer_name",
   "column_break_customer_2",
-  "tax_id",
-  "column_break_customer_3",
   "mobile_no",
-  "column_break_customer_4",
+  "column_break_customer_3",
   "simplified_tax_invoice",
+  "column_break_customer_4",
+  "cash_customer_name",
   "column_break_customer_5",
   "change_cash_customer_name",
-  "cash_customer_name",
+  "tax_id",
   "items_section",
   "items",
   "totals_section",
@@ -138,6 +138,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "default": "0",
    "depends_on": "eval:doc.sales_type=='Cash'",
    "fieldname": "is_bank",
    "fieldtype": "Check",
@@ -176,7 +177,6 @@
    "in_standard_filter": 1,
    "label": "A/C Name",
    "options": "Customer",
-   "reqd": 1,
    "search_index": 1
   },
   {
@@ -217,6 +217,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "default": "0",
    "fieldname": "simplified_tax_invoice",
    "fieldtype": "Check",
    "label": "Simplified Tax Invoice"
@@ -226,6 +227,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "default": "0",
    "fieldname": "change_cash_customer_name",
    "fieldtype": "Check",
    "label": "Change Cash Customer Name",
@@ -470,7 +472,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-26 19:00:00.000000",
+ "modified": "2026-10-27 10:12:20.929661",
  "modified_by": "Administrator",
  "module": "Metalworld Erp",
  "name": "Sales Bill",
@@ -551,8 +553,8 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "search_fields": "customer,customer_name,ref_no",
- "show_title_field_in_link": 0,
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
