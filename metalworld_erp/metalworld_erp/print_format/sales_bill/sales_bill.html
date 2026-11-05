@@ -1,0 +1,222 @@
+<style>
+	/* Frappe's print bundle sets body { text-rendering: optimizeLegibility }, which makes wkhtmltopdf
+	   measure Arabic narrower than it draws, so right-aligned Arabic spills out of its cell. */
+	.sb-print, .sb-print * { text-rendering: auto !important; }
+	.sb-print { font-family: "Inter", "Noto Sans", "Noto Sans Arabic", "Noto Naskh Arabic", Arial, sans-serif; font-size: 10.5px; color: #1f2933; }
+	.sb-print table { width: 100%; border-collapse: collapse; }
+	.sb-print .ar { font-family: "Noto Sans Arabic", "Noto Naskh Arabic", "Arial", sans-serif; }
+	/* Frappe's print stylesheet pads every cell 6px !important; use our own spacing. */
+	.print-format .sb-print td, .print-format .sb-print th { padding: 0 !important; vertical-align: top !important; }
+	.sb-print .muted { color: #6b7785; }
+	.sb-print .right { text-align: right; }
+	.sb-print .center { text-align: center; }
+	.sb-print .nowrap { white-space: nowrap; }
+
+	.sb-head td { vertical-align: top; }
+	.sb-company { font-size: 17px; font-weight: 700; margin-bottom: 2px; }
+	.sb-company-ar { font-size: 13px; font-weight: 600; }
+	.sb-head .sb-meta { font-size: 10px; line-height: 1.5; }
+
+	.sb-title { margin: 10px 0 8px; border-top: 2px solid #1f2933; border-bottom: 2px solid #1f2933; }
+	.print-format .sb-title td { padding: 5px 0 !important; vertical-align: middle !important; }
+	.sb-title td { font-size: 15px; font-weight: 700; }
+	.sb-status { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 8px; border: 1.5px solid #c0392b; color: #c0392b; border-radius: 3px; margin-left: 8px; vertical-align: middle; }
+
+	.sb-info { margin-bottom: 10px; }
+	.sb-info > tbody > tr > td { vertical-align: top; width: 50%; }
+	.sb-box { border: 1px solid #c9d1d9; border-radius: 4px; }
+	.sb-box-title { background: #eef2f6; font-weight: 700; padding: 4px 8px; border-bottom: 1px solid #c9d1d9; }
+	.print-format .sb-kv td { padding: 2px 8px !important; line-height: 1.45; }
+	.sb-kv td.k { width: 30%; color: #52606d; white-space: nowrap; }
+	.sb-kv td.v { font-weight: 600; }
+	.sb-kv td.a { width: 26%; text-align: right; color: #52606d; }
+
+	.sb-items { margin-bottom: 8px; }
+	.sb-items tr, .sb-items td, .sb-items th { page-break-inside: avoid !important; }
+	.sb-items thead { display: table-header-group; }
+	.sb-items th { background: #1f2933; color: #fff; font-weight: 600; border: 1px solid #1f2933; font-size: 9.5px; line-height: 1.3; }
+	.print-format .sb-items th { padding: 4px 5px !important; vertical-align: middle !important; }
+	.sb-items th .ar { font-weight: 400; display: block; font-size: 8.5px; line-height: 1.5; color: #d9e2ec; }
+	.sb-items td { border: 1px solid #c9d1d9; }
+	.print-format .sb-items td { padding: 4px 5px !important; }
+	.sb-items tbody tr:nth-child(even) td { background: #f7f9fb; }
+	.sb-items .code { font-weight: 600; }
+	.sb-foc { display: inline-block; font-size: 8.5px; font-weight: 700; color: #1e7e34; border: 1px solid #1e7e34; border-radius: 2px; padding: 0 4px; margin-left: 4px; }
+	.sb-items tr.sb-sum td { font-weight: 700; background: #eef2f6 !important; }
+
+	.sb-bottom > tbody > tr > td { vertical-align: top; }
+	.sb-words { border: 1px dashed #9aa5b1; border-radius: 4px; padding: 6px 8px; margin-bottom: 8px; }
+	.sb-totals td { border-bottom: 1px solid #e4e7eb; }
+	.print-format .sb-totals td { padding: 4px 8px !important; vertical-align: middle !important; }
+	.sb-totals td.k { color: #52606d; }
+	.sb-totals td.v { text-align: right; font-weight: 600; white-space: nowrap; }
+	.sb-totals tr.grand td { background: #1f2933; color: #fff; font-size: 12.5px; font-weight: 700; border-bottom: none; }
+	.sb-totals tr.grand td.k .ar { color: #fff; }
+	.sb-totals tr.net td { background: #e6f4ea; font-weight: 700; }
+
+	.sb-sign { margin-top: 38px; }
+	.sb-sign td { width: 33%; text-align: center; }
+	.print-format .sb-sign td { padding: 0 12px !important; }
+	.sb-sign .line { border-top: 1px solid #52606d; padding-top: 4px; }
+	.sb-footer { margin-top: 14px; font-size: 9px; color: #6b7785; text-align: center; }
+</style>
+
+{%- set p = doc.precision("grand_total") or 2 -%}
+{%- macro num(v) -%}{{ frappe.utils.fmt_money(v or 0, precision=p) }}{%- endmacro -%}
+{%- macro bi(en, ar) -%}{{ en }} <span class="ar">{{ ar }}</span>{%- endmacro -%}
+
+{%- set company = frappe.get_doc("Company", doc.company) -%}
+{%- set address_link = frappe.get_all("Dynamic Link", filters={"link_doctype": "Company", "link_name": doc.company, "parenttype": "Address"}, fields=["parent"], limit=1) -%}
+{%- set address = frappe.get_doc("Address", address_link[0].parent) if address_link else None -%}
+{%- set customer_label = doc.cash_customer_name if (doc.change_cash_customer_name and doc.cash_customer_name) else (doc.customer_name or doc.customer) -%}
+{%- set is_simplified = doc.simplified_tax_invoice -%}
+
+<div class="sb-print">
+	{%- if not letter_head %}
+	<table class="sb-head">
+		<tr>
+			<td style="width: 60%">
+				<div class="sb-company">{{ company.company_name }}</div>
+				<div class="sb-meta">
+					{%- if address %}
+					{{ address.address_line1 or "" }}{% if address.address_line2 %}, {{ address.address_line2 }}{% endif %}<br>
+					{{ [address.city, address.state, address.pincode, address.country] | select | join(", ") }}<br>
+					{%- endif %}
+					{%- if company.phone_no %}{{ _("Tel") }}: {{ company.phone_no }}{% endif %}
+					{%- if company.email %}{% if company.phone_no %} &nbsp;|&nbsp; {% endif %}{{ company.email }}{% endif %}
+				</div>
+			</td>
+			<td class="right" style="width: 40%">
+				{%- if company.company_logo %}<img src="{{ company.company_logo }}" style="max-height: 55px; max-width: 180px; margin-bottom: 4px;"><br>{% endif %}
+				{%- if company.tax_id %}
+				<div class="sb-meta"><b>{{ _("VAT No") }}</b> <span class="ar">الرقم الضريبي</span>: {{ company.tax_id }}</div>
+				{%- endif %}
+			</td>
+		</tr>
+	</table>
+	{%- endif %}
+
+	<table class="sb-title">
+		<tr>
+			<td>
+				{{ _("Simplified Tax Invoice") if is_simplified else _("Tax Invoice") }}
+				{%- if doc.docstatus == 0 %}<span class="sb-status">{{ _("DRAFT") }}</span>{% endif %}
+				{%- if doc.docstatus == 2 %}<span class="sb-status">{{ _("CANCELLED") }}</span>{% endif %}
+			</td>
+			<td class="right ar">{{ "فاتورة ضريبية مبسطة" if is_simplified else "فاتورة ضريبية" }}</td>
+		</tr>
+	</table>
+
+	<table class="sb-info">
+		<tr>
+			<td style="padding-right: 6px">
+				<div class="sb-box">
+					<div class="sb-box-title">{{ bi(_("Customer"), "العميل") }}</div>
+					<table class="sb-kv">
+						<tr><td class="k">{{ _("A/C No") }}</td><td class="v">{{ doc.account_no or "-" }}</td><td class="a ar">رقم الحساب</td></tr>
+						<tr><td class="k">{{ _("Name") }}</td><td class="v">{{ customer_label }}</td><td class="a ar">الاسم</td></tr>
+						<tr><td class="k">{{ _("VAT No") }}</td><td class="v">{{ doc.tax_id or "-" }}</td><td class="a ar">الرقم الضريبي</td></tr>
+						<tr><td class="k">{{ _("Mobile") }}</td><td class="v">{{ doc.mobile_no or "-" }}</td><td class="a ar">الجوال</td></tr>
+					</table>
+				</div>
+			</td>
+			<td style="padding-left: 6px">
+				<div class="sb-box">
+					<div class="sb-box-title">{{ bi(_("Invoice Details"), "بيانات الفاتورة") }}</div>
+					<table class="sb-kv">
+						<tr><td class="k">{{ _("Invoice No") }}</td><td class="v">{{ doc.name }}</td><td class="a ar">رقم الفاتورة</td></tr>
+						<tr><td class="k">{{ _("Date") }}</td><td class="v">{{ frappe.utils.format_date(doc.posting_date) }}</td><td class="a ar">التاريخ</td></tr>
+						<tr>
+							<td class="k">{{ _("Type") }}</td>
+							<td class="v">{{ _(doc.sales_type) }}{% if doc.sales_type == "Cash" and doc.mode_of_payment %} ({{ doc.mode_of_payment }}){% endif %}</td>
+							<td class="a ar">{{ "نقدي" if doc.sales_type == "Cash" else "آجل" }}</td>
+						</tr>
+						{%- if doc.ref_no %}<tr><td class="k">{{ _("Ref. No") }}</td><td class="v">{{ doc.ref_no }}</td><td class="a ar">رقم المرجع</td></tr>{% endif %}
+						{%- if doc.branch %}<tr><td class="k">{{ _("Branch") }}</td><td class="v">{{ doc.branch }}</td><td class="a ar">الفرع</td></tr>{% endif %}
+						{%- if doc.po_no %}<tr><td class="k">{{ _("Customer PO") }}</td><td class="v">{{ doc.po_no }}{% if doc.po_date %} / {{ frappe.utils.format_date(doc.po_date) }}{% endif %}</td><td class="a ar">أمر الشراء</td></tr>{% endif %}
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
+
+	<table class="sb-items">
+		<thead>
+			<tr>
+				<th class="center" style="width: 4%">#<span class="ar">م</span></th>
+				<th style="width: 10%">{{ _("Item Code") }}<span class="ar">رمز الصنف</span></th>
+				<th>{{ _("Description") }}<span class="ar">الوصف</span></th>
+				<th class="center" style="width: 7%">{{ _("Unit") }}<span class="ar">الوحدة</span></th>
+				<th class="right" style="width: 7%">{{ _("Qty") }}<span class="ar">الكمية</span></th>
+				<th class="right" style="width: 10%">{{ _("Unit Price") }}<span class="ar">سعر الوحدة</span></th>
+				<th class="right" style="width: 11%">{{ _("Amount") }}<span class="ar">المبلغ</span></th>
+				<th class="right" style="width: 11%">{{ _("VAT") }}<span class="ar">الضريبة</span></th>
+				<th class="right" style="width: 12%">{{ _("Total Inc VAT") }}<span class="ar">الإجمالي شامل الضريبة</span></th>
+			</tr>
+		</thead>
+		<tbody>
+			{%- for row in doc.items %}
+			<tr>
+				<td class="center">{{ row.idx }}</td>
+				<td class="code">{{ row.item_code }}</td>
+				<td>
+					{{ row.item_name or "" }}
+					{%- if row.is_foc %}<span class="sb-foc">{{ _("FOC") }}</span>{% endif %}
+					{%- if row.model %}<div class="muted">{{ _("Model") }}: {{ row.model }}</div>{% endif %}
+				</td>
+				<td class="center">{{ row.uom }}</td>
+				<td class="right nowrap">{{ row.get_formatted("qty") }}</td>
+				<td class="right nowrap">{{ num(row.rate) }}</td>
+				<td class="right nowrap">{{ num(row.amount) }}</td>
+				<td class="right nowrap">{{ num(row.tax_amount) }}<div class="muted">{{ frappe.utils.flt(row.tax_rate, 2) }}%</div></td>
+				<td class="right nowrap"><b>{{ num(row.amount_inc_vat) }}</b></td>
+			</tr>
+			{%- endfor %}
+			<tr class="sb-sum">
+				<td colspan="4" class="right">{{ _("Items") }}: {{ doc.total_items or (doc.items | length) }} &nbsp; | &nbsp; {{ _("Total Qty") }} <span class="ar">إجمالي الكمية</span></td>
+				<td class="right nowrap">{{ doc.get_formatted("total_qty") }}</td>
+				<td></td>
+				<td class="right nowrap">{{ num(doc.total_amount) }}</td>
+				<td class="right nowrap">{{ num(doc.total_tax) }}</td>
+				<td class="right nowrap">{{ num(doc.grand_total) }}</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<table class="sb-bottom">
+		<tr>
+			<td style="width: 54%; padding-right: 10px">
+				<div class="sb-words">
+					<div class="muted">{{ bi(_("Amount in words"), "المبلغ كتابة") }}</div>
+					<b>{{ frappe.utils.money_in_words(doc.grand_total, frappe.db.get_value("Company", doc.company, "default_currency")) }}</b>
+				</div>
+				{%- if doc.remarks %}
+				<div class="sb-words" style="border-style: solid">
+					<div class="muted">{{ bi(_("Remarks"), "ملاحظات") }}</div>
+					{{ doc.remarks | e | replace("\n", "<br>") }}
+				</div>
+				{%- endif %}
+			</td>
+			<td style="width: 46%">
+				<table class="sb-totals">
+					<tr><td class="k">{{ bi(_("Total (Excl. VAT)"), "الإجمالي غير شامل الضريبة") }}</td><td class="v">{{ doc.get_formatted("total_amount") }}</td></tr>
+					<tr><td class="k">{{ bi(_("Total VAT"), "إجمالي الضريبة") }}</td><td class="v">{{ doc.get_formatted("total_tax") }}</td></tr>
+					<tr class="grand"><td class="k">{{ bi(_("Total Inc VAT"), "الإجمالي شامل الضريبة") }}</td><td class="v">{{ doc.get_formatted("grand_total") }}</td></tr>
+					<tr><td class="k">{{ bi(_("Previous Balance"), "الرصيد السابق") }}</td><td class="v">{{ doc.get_formatted("previous_balance") }}</td></tr>
+					<tr><td class="k">{{ bi(_("Received Amount"), "المبلغ المستلم") }}</td><td class="v">{{ doc.get_formatted("received_amount") }}</td></tr>
+					<tr class="net"><td class="k">{{ bi(_("Net Balance"), "الرصيد الصافي") }}</td><td class="v">{{ doc.get_formatted("net_balance") }}</td></tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+
+	<table class="sb-sign">
+		<tr>
+			<td><div class="line">{{ bi(_("Prepared By"), "أعدها") }}</div></td>
+			<td><div class="line">{{ bi(_("Authorized Signature"), "التوقيع المعتمد") }}</div></td>
+			<td><div class="line">{{ bi(_("Received By"), "المستلم") }}</div></td>
+		</tr>
+	</table>
+
+	<div class="sb-footer">{{ _("Thank you for your business") }} &nbsp;·&nbsp; <span class="ar">شكراً لتعاملكم معنا</span></div>
+</div>

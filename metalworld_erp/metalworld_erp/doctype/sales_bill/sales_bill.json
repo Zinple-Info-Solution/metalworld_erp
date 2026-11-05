@@ -2,6 +2,7 @@
  "actions": [],
  "autoname": "naming_series:",
  "creation": "2026-10-26 19:00:00",
+ "default_print_format": "Sales Bill",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -472,7 +473,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2026-10-27 10:12:20.929661",
+ "modified": "2026-10-29 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Metalworld Erp",
  "name": "Sales Bill",
