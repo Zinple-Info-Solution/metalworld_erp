@@ -121,10 +121,20 @@ frappe.ui.form.on("Sales Bill Item", {
 
 // Enter in the item table works like a POS entry line:
 // Item / Item Name / Unit -> QTY of the same row; QTY or later -> Item of the next row (added if needed).
+// Tab from Item also skips straight to QTY.
 const ENTER_TO_QTY = ["item_code", "item_name", "uom"];
 
 function setup_enter_key(frm) {
 	const grid = frm.fields_dict.items.grid;
+	grid.wrapper.off("keydown.mw_tab").on("keydown.mw_tab", ".grid-row input[data-fieldname='item_code']", (e) => {
+		if (e.which !== frappe.ui.keyCode.TAB || e.shiftKey) return;
+		// Awesomplete has already picked the highlighted suggestion on this Tab; only redirect the focus.
+		e.preventDefault();
+		const row_idx = cint($(e.target).closest(".grid-row").attr("data-idx"));
+		$(e.target).trigger("blur");
+		setTimeout(() => focus_cell(grid.grid_rows[row_idx - 1], "qty"), 150);
+	});
+
 	grid.wrapper.off("keydown.mw_enter").on("keydown.mw_enter", ".grid-row input", (e) => {
 		// A highlighted dropdown suggestion takes Enter first (Awesomplete prevents default).
 		if (e.which !== frappe.ui.keyCode.ENTER || e.isDefaultPrevented() || e.shiftKey) return;
